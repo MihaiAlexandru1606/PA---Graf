@@ -1,0 +1,109 @@
+------------------------    Proiectarea Algoritmilor   ------------------------
+
+Tema 2 : Drumuri in Graf
+Nume : Niculescu
+Prenume : Mihai Alexandru
+Grupa : 325CB
+Sistem de operare : Ubuntu 18.04 LTS 64bit 
+Editor : Intellij 2018.1
+Compilator : javac 9.0.4  
+Fisiere: Dice.java Disjcnt.java Makefile MinHeap.java Minlexbfs.java 
+         Revedges.java Rtd.java ShortestPathAux.java README
+-------------------------------------------------------------------------------
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<   Minlexbfs      >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Fisere : Minlexbfs.java
+Complexitatea temporala : O(E * log(V) ), V numar noduri, E  numar muchi
+Complexiatetea spatiala : O(V ^ 2)
+    
+    In program folosesc pentru stocarea grafului, in loc de liste simple, 
+TreeSet, pentru a tine ordoant vecini , asta inseamna ca pentru 
+insearea muchilor in fiecare TreeSet, cum add are O(log n), duce la O(E* log(V))
+un bfs normal are O(E + V), am gasit pe stackoverflow ca for each are tot
+O(n) pentru TreeSet, apoi scrierea raspunsului. Cum graful este conex 
+inseamna ca avem minim V - 1 muchii deci E >= V => O(E * log(V)). 
+    Spatiul maxim folosit este de O(V ^ 2) pentru stocarea grafului, mai sunt
+O(n) pentru visited, queue etc.
+
+    Mai intai am folosit idea ca pentru a obtine ordinea minima lexico-grafica
+pornind la nodul cel mai "mic", deci de la 1, apoi sunt vecini lui 1 in ordinde
+crescatoare si tot asa pentru fiecare vecin al nodului curent extras din coada
+nevizitat. 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<     Disjcnt        >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Fisiere : Disjcnt.java
+Complexitatea temporala : O(|E| + |V| ), V numar noduri, E  numar muchi
+Complexiatetea spatiala : O(|V| ^ 2)
+    
+    Mai intai vine de la algoritmul lui Tarjan pentru descoperirea puntilor. 
+Apoi pe graful rezultat se mai aplica inca odata dfs care are tot O(|V| + |E|)
+deci algritmul are o complexitate O(|E| + |V|).Spatiul maxim folosit este 
+de O(V ^ 2) pentru stocarea grafului, cand este complet/des.
+
+    In lab-ul 10 am gasit definitia pentru punti(muchi) ca fiind: "muchiile critice
+sunt muchiile care nu apar în niciun ciclu", deci fara cicluri este clar ca exista
+decat un singur drum intre cele 2 noduri care aprare o punte. De la observatia 
+am plecat si m-am gandit sa elimin toate puntile din garf, apoi cu o parcurgere
+, am ales dfs, sa vad cate noduri inca mai sunt conctate intre ele.Graful primit
+la acesta problema poate sa aiba mai multe muchi intre doua noduri, cum este
+in exemplu:
+5 6
+1 2
+2 3
+3 1
+3 4
+4 5
+4 5 
+    Pentru o rulare, vom gasi ca punti : (3, 4) dar si (4, 5). Acest lucru 
+inseamna ca vom retine amandoua perechi de (4, 5)(algoritmul lui Tarjan va 
+marca doar prima ca fiind punte).Acest lucru nu incurca pentru ca dupa ce 
+"eliminam" prima pereche va mai ramane inca o muchie (4, 5) care conecteaza4, 5
+    Pentru ca graful este neorientat in reprezintare cu liste de adiacenta va
+pentru (3, 4), in lista lui 3 -> 4, si in lista lui 4 -> 3. Deci pentru o 
+eliminare completa a muchiei (3, 4) cautam 3 in lista lui 4 si invers. Destul
+de neplacut, asa am create clasa Edge care retine daca a fost stearsa si gemana
+sa. duce remove de (3, 4) la O(1).
+    Numarul de perechi de noduri conectate intr-un ciclu este de N * (N -1) / 2
+pentru N noduri(Combianari de N luate cata 2).
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<        Rtd         >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Fisere : Dice.java MinHeap.java ShortestPathAux.java Rtd.java
+Complexitatea temporala : O(N * M * log(N * M) ), N, M dimensiunile grid-ului
+Complexiatetea spatiala : O(N * M)
+    
+    Complexiatea tempoatra o da algoritmul lui Dijsktra folosit in metoda 
+getShortestPath din clasa ShortestPathAux.java, pentru ca consideram un graf in 
+care avem N * M * 24 de noduri, pentru o implemntare eficenta am creat clasa 
+MinHeap. Complexitea lui Dijsktra in mod normal este O((V+E) log V), 
+cum noi avem decat 4 muchi intre doua noduri asta va duce la O(V * log V), si 
+avem V = N * M * 24 => O(N * M * log(N * M) ).
+    Complexiatea spatiala o da in primul rand ordonete si array din MinHeap, 
+care contin N * M * 24 de clase InfoNode si contains si d din ShortestPathAux
+cu acelasi ordin de marime dar pentru primitive.
+
+    Cu acest lucru putem sa gasim distanta minima de la (Sx, Sy) la (Fx, Fy)
+folosind graful care contine toate posibilitate in care se poate afla un zar.
+Aplicam un Dijsktra pe graf aflam distanle minime pentru cel 24 de stari din 
+(Fx, Fy) si apoi minimul dintre ele.Pentru ca avem si obstacole ele nu vor fi
+adaugate in heap. Implemtrea algoritmul lui Dijsktra calculeza distatele minime
+pentru nodurile care sunt in heap, asfel prin neintroducere pur si simplu nu 
+sunt utilizate si ignorate. Pentru astfel de triplet avem asocit un numar, care
+reprezinta si nod-ul, dupa formul : (i * M + j) * NUMBER_STATE + k, k ∈[1, 24].
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      Revedges        >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Fisere : Revedges.java
+Complexitatea temporala : O(V ^ 3 + Q), unde Q numarul de query, V numar noduri
+Complexiatetea spatiala : O(V ^ 2)
+
+    Complexiate o ofera algoritmul lui Floyd Warshall, 3 for-uri, unul in altul.
+Apoi rapunul la cele Q query. Spatiul maxim folosti este de O(V ^ 2) pentru 
+stocare matrice d, care semnificatia de distnata minima si numar de muchii 
+inversate.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
