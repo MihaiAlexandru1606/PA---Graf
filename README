@@ -6,7 +6,7 @@ Prenume : Mihai Alexandru
 Grupa : 325CB
 Sistem de operare : Ubuntu 18.04 LTS 64bit 
 Editor : Intellij 2018.1
-Compilator : javac 9.0.4  
+Compilator : javac 9.0.4
 Fisiere: Dice.java Disjcnt.java Makefile MinHeap.java Minlexbfs.java 
          Revedges.java Rtd.java ShortestPathAux.java README
 -------------------------------------------------------------------------------
